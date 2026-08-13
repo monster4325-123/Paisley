@@ -1,4 +1,6 @@
 from fastapi import APIRouter
+from app.models.uniprot_model import UniProtResponse
+from app.services.uniprot_service import get_uniprot_protein
 
 from app.models.protein_models import (
     ProteinSequenceRequest,
@@ -21,3 +23,10 @@ def upload_protein(
     request: ProteinSequenceRequest
 ):
     return validate_protein_sequence(request)
+@router.get(
+    "/uniprot/{accession}",
+    response_model=UniProtResponse
+)
+def get_protein_from_uniprot(accession: str):
+
+    return get_uniprot_protein(accession)
