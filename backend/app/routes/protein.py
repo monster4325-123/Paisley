@@ -12,6 +12,8 @@ from app.services.protein_service import validate_protein_sequence
 from app.services.uniprot_service import get_uniprot_protein
 from app.services.alphafold_service import get_alphafold_protein
 
+from app.services.rcsb_service import get_rcsb_structure
+from app.models.rcsb_model import RCSBResponse
 
 router = APIRouter(
     prefix="/protein",
@@ -67,3 +69,18 @@ def get_protein_from_alphafold(
             status_code=502,
             detail=f"AlphaFold service error: {str(error)}"
         )
+@router.get(
+    "/rcsb/{pdb_id}",
+    response_model=RCSBResponse
+)
+def get_protein_from_rcsb(pdb_id: str):
+
+    result = get_rcsb_structure(pdb_id)
+
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Structure not found in RCSB PDB."
+        )
+
+    return result
